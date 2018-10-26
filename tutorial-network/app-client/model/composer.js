@@ -6,26 +6,24 @@ const winston = require('winston');
 const logger = winston.loggers.get('composer');
 
 // these are the credentials to use to connect to the Hyperledger Fabric
-let cardname = 'admin@tutorial-network';
+let cardName = 'admin@tutorial-network';
 
 class Composer {
     constructor() {
-        await this.init();
+        this.init()
+            .catch((err) => {
+                logger.error(err.toString());
+            });
     }
 
     async init() {
-        try {
-            this.bizNetworkConnection = new BusinessNetworkConnection();
-            this.businessNetworkDefinition = await this.bizNetworkConnection.connect(cardName);
-            this.traderRegistry = await this.bizNetworkConnection.getParticipantRegistry('org.example.mynetwork.Trader');
-            this.commodityRegistry = await this.bizNetworkConnection.getAssetRegistry('org.example.mynetwork.Commodity');
-            this.factory = this.businessNetworkDefinition.getFactory();
-        } catch (err) {
-            logger.error('Error: %s', err.toString());
-        }
+        this.bizNetworkConnection = new BusinessNetworkConnection();
+        this.businessNetworkDefinition = await this.bizNetworkConnection.connect(cardName);
+        this.traderRegistry = await this.bizNetworkConnection.getParticipantRegistry('org.example.mynetwork.Trader');
+        this.commodityRegistry = await this.bizNetworkConnection.getAssetRegistry('org.example.mynetwork.Commodity');
+        this.factory = this.businessNetworkDefinition.getFactory();
 
-        this.createDataSample();
-
+        //await this.createDataSample();
     }
 
     async createDataSample() {
@@ -34,24 +32,24 @@ class Composer {
         trader1.lastName = 'one';
 
         let trader2 = this.factory.newResource('org.example.mynetwork', 'Trader', 'tradeId:TRADER2');
-        trader3.firstName = 'trader';
+        trader2.firstName = 'trader';
         trader2.lastName = 'two';
 
 
         let commodity1 = this.factory.newResource('org.example.mynetwork', 'Commodity', 'tradingSymbol:AG');
         commodity1.description = 'silver';
         commodity1.mainExchange = 'CBOT';
-        commodity1.quantity = '60';
+        commodity1.quantity = 60;
 
         let commodity2 = this.factory.newResource('org.example.mynetwork', 'Commodity', 'tradingSymbol:CC');
         commodity2.description = 'Cocoa';
         commodity2.mainExchange = 'ICE';
-        commodity2.quantity = '60';
+        commodity2.quantity = 80;
 
         let traderRelation = this.factory.newRelationship('org.example.mynetwork', 'Trader', 'tradeId:TRADER1');
         commodity1.owner = traderRelation;
 
-        let traderRelation = this.factory.newRelationship('org.example.mynetwork', 'Trader', 'tradeId:TRADER2');
+        traderRelation = this.factory.newRelationship('org.example.mynetwork', 'Trader', 'tradeId:TRADER2');
         commodity2.owner = traderRelation;
 
         await this.commodityRegistry.addAll([commodity1, commodity2]);
@@ -81,48 +79,33 @@ class Composer {
 
     async getAllCommodities() {
         let commodities = await this.commodityRegistry.resolveAll();
-        let table = new Table({
-            head: ['TradingSymbol', 'Tradeid', 'Trader FirstName', 'Trader LastName', 'Description', 'MainExchange', 'Quantity']
-        });
         let arrayLength = commodities.length;
-
+        var commoditiesResult = [];
         for (let i = 0; i < arrayLength; i++) {
-
-            let tableLine = [];
-            tableLine.push(commodities[i].tradingSymbol);
-            tableLine.push(commodities[i].owner.tradeId);
-            tableLine.push(commodities[i].owner.firstName);
-            tableLine.push(commodities[i].owner.lastName);
-            tableLine.push(commodities[i].description);
-            tableLine.push(commodities[i].mainExchange);
-            tableLine.push(commodities[i].quantity);
-            table.push(tableLine);
+            commoditiesResult.push({
+                TradingSymbol: commodities[i].tradingSymbol, tradeId: commodities[i].owner.tradeId,
+                firstName: commodities[i].owner.firstName, lastName: commodities[i].owner.lastName, description: commodities[i].description,
+                mainExchange: commodities[i].mainExchange, quantity: commodities[i].quantity
+            });
         }
 
-        return table;
+        return commoditiesResult;
     }
 
     async getAllTraders() {
         let traders = await this.traderRegistry.getAll();
-        let table = new Table({
-            head: ['Tradeid', 'Trader FirstName', 'Trader LastName']
-        });
+        var tradersResult = [];
         let arrayLength = traders.length;
 
         for (let i = 0; i < arrayLength; i++) {
-
-            let tableLine = [];
-            tableLine.push(traders[i].tradeId);
-            tableLine.push(traders[i].firstName);
-            tableLine.push(traders[i].lastName);
-            table.push(tableLine);
+            tradersResult.push({ tradeId: traders[i].tradeId, firstName: traders[i].firstName, lastName: traders[i].lastName });
         }
 
-        return table;
+        return tradersResult;
     }
 
     async getTrader(tradeid) {
-        let trader = await this.traderRegistry.get(tradeid);
+        let trader = await this.traderRegistry.get('tradeId:' + tradeid);
         if (trader == null) {
             return null;
         }
@@ -134,7 +117,7 @@ class Composer {
     }
 
     async getCommodityBySymbol(tradingSymbol) {
-        let commodity = await this.commodityRegistry.resolve(tradingSymbol);
+        let commodity = await this.commodityRegistry.resolve('tradingSymbol:' + tradingSymbol);
         if (commodity == null)
             return null;
         return {
@@ -150,23 +133,23 @@ class Composer {
 
     async getCommoditiesByTrader(tradeId) {
         let commodities = await this.commodityRegistry.resolveAll();
-        let table = new Table({
-            head: ['TradingSymbol', 'Description', 'MainExchange', 'Quantity']
-        });
+        console.log('query tradeid='+tradeId);
         let arrayLength = commodities.length;
-
+        var commoditiesResult = [];
         for (let i = 0; i < arrayLength; i++) {
-            if (commodities[i].owner.tradeId === tradeId) {
-                let tableLine = [];
-                tableLine.push(commodities[i].tradingSymbol);
-                tableLine.push(commodities[i].description);
-                tableLine.push(commodities[i].mainExchange);
-                tableLine.push(commodities[i].quantity);
-                table.push(tableLine);
+            console.log(commodities[i].owner.tradeId );
+
+            if (commodities[i].owner.tradeId.split(':')[1] === tradeId) {
+                commoditiesResult.push({
+                    TradingSymbol: commodities[i].tradingSymbol, tradeId: commodities[i].owner.tradeId,
+                    firstName: commodities[i].owner.firstName, lastName: commodities[i].owner.lastName, description: commodities[i].description,
+                    mainExchange: commodities[i].mainExchange, quantity: commodities[i].quantity
+                });
+                console.log('push commodity '+commodities[i].tradingSymbol);
             }
         }
 
-        return table;
+        return commoditiesResult;
     }
 
     async createTrade(tradeId, tradingSymbol) {
@@ -177,18 +160,18 @@ class Composer {
                 return false;
             } else {
                 var trader = await this.getTrader(tradeId);
-                if (trader != null){
+                if (trader != null) {
                     let transaction = this.factory.newTransaction('org.example.mynetwork', 'tradeCommodity');
                     transaction.title = this.factory.newRelationship('org.example.mynetwork', 'Commodity', 'tradingSymbol:' + tradingSymbol);
                     transaction.seller = this.factory.newRelationship('org.example.mynetwork', 'Trader', 'tradeId:' + tradeId);
                     await this.bizNetworkConnection.submitTransaction(transaction);
                     return true;
-                }else{
+                } else {
                     logger.error('Trader not found');
                     return false;
                 }
             }
-        }else{
+        } else {
             logger.error('Commodity not found');
             return false;
         }
@@ -196,4 +179,4 @@ class Composer {
 
 }
 
-module.exports= Composer;
+module.exports = Composer;

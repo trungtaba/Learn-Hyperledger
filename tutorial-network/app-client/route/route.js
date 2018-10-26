@@ -10,11 +10,11 @@ var composer = new Composer();
 router.get('/commodities', jsonParser, function (req, res) {
     var value;
     res.setHeader('Content-Type', 'application/json');
-    composer.getAllTraders()
+    composer.getAllCommodities()
     .then((table)=>{
         res.status(200).send(JSON.stringify({ "code": 200, "message": table }));
     }).catch((err)=>{
-        res.status(400).send(JSON.stringify({ "code": 400, "message": err.toTring() }));
+        res.status(400).send(JSON.stringify({ "code": 400, "message": err.toString() }));
     });
 });
 
@@ -25,7 +25,7 @@ router.get('/traders', jsonParser, function (req, res) {
     .then((table)=>{
         res.status(200).send(JSON.stringify({ "code": 200, "message": table }));
     }).catch((err)=>{
-        res.status(400).send(JSON.stringify({ "code": 400, "message": err.toTring() }));
+        res.status(400).send(JSON.stringify({ "code": 400, "message": err.toString() }));
     });
 });
 
@@ -43,13 +43,14 @@ router.get('/trader/:tradeid', jsonParser, function (req, res) {
                 res.status(200).send(JSON.stringify({ "code": 200, "message": trader }));
             }
         }).catch((err)=>{
-            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toTring() }));
+            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toString() }));
         });
     }
 });
 
 router.get('/commodity/:tradingSymbol', jsonParser, function (req, res) {
     let tradingSymbol=req.params.tradingSymbol;
+    console.log(tradingSymbol);
     res.setHeader('Content-Type', 'application/json');
     if(!tradingSymbol){
         res.status(404).send(JSON.stringify({"code":404,"message":"TradingSymbol not found"}));
@@ -62,7 +63,7 @@ router.get('/commodity/:tradingSymbol', jsonParser, function (req, res) {
                 res.status(200).send(JSON.stringify({ "code": 200, "message": commodity }));
             }
         }).catch((err)=>{
-            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toTring() }));
+            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toString() }));
         });
     }
 });
@@ -81,7 +82,7 @@ router.get('/commodityTrader/:tradeid', jsonParser, function (req, res) {
                 res.status(200).send(JSON.stringify({ "code": 200, "message": commodities }));
             }
         }).catch((err)=>{
-            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toTring() }));
+            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toString() }));
         });
     }
 });
@@ -102,7 +103,7 @@ router.get('/trader/create/', jsonParser, function (req, res) {
     }else{
         composer.createTrader(tradeid,firstName,lastName)
         .catch((err)=>{
-            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toTring() }));
+            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toString() }));
             return;
         });
 
@@ -129,7 +130,7 @@ router.get('/commodity/create/', jsonParser, function (req, res) {
     }else{
         composer.createCommodity(tradingSymbol,description,mainExchange,quantity,tradeid)
         .catch((err)=>{
-            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toTring() }));
+            res.status(400).send(JSON.stringify({ "code": 400, "message": err.toString() }));
             return;
         });
 
