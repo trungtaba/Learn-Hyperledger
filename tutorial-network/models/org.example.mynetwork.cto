@@ -19,14 +19,3 @@ transaction Trade {
     --> Commodity commodity
     --> Trader newOwner
 }
-
-event TradeNotification {
-    --> Commodity commodity
-}
-
-transaction RemoveHighQuantityCommodities {
-}
-
-event RemoveNotification {
-    --> Commodity commodity
-}
