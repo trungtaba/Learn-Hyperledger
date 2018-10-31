@@ -1,0 +1,32 @@
+namespace org.voting
+
+participant Voter identified by voterId {
+  o String voterId
+  o String name
+}
+
+asset VoterVote identified by voterId {
+  o String voterId
+  o Boolean isVoted
+}
+
+asset Producer identified by producerId {
+  o String producerId
+  o String name
+}
+
+asset ProducerVote identified by producerId {
+  o String producerId
+  o Integer totalVote
+}
+
+transaction Vote {
+  --> Producer producer
+  --> Voter voter
+}
+
+event VoteEvent {
+  o String voter
+  o String producer
+  o DateTime time
+}

@@ -1,0 +1,33 @@
+query FcoinRedemptions{
+    description: "Find all the Fcoin Redemptions"
+    statement:
+        SELECT org.loyal.FcoinRedeem
+}
+
+query FcoinRedemptionsByMember {
+    description: "Find all the Fitcoin Redemptions for specified member"
+    statement:
+        SELECT org.loyal.FcoinRedeem
+            WHERE ( member == _$member )
+}
+
+query FindFcoinsReceivedByMember {
+    description: "Find all the Fitcoins Received for specified member"
+    statement:
+        SELECT org.loyal.FcoinReceive
+            WHERE ( member == _$member )
+}
+
+query ActiveMembers {
+	description: "Find only active members"
+  	statement:
+  		SELECT org.loyal.Member
+  			WHERE ( memberStatus == 'ACTIVE' )
+}
+
+query InactiveMembers {
+	description: "Find only inactive members"
+  	statement:
+  		SELECT org.loyal.Member
+  			WHERE ( memberStatus == 'INACTIVE' )
+}

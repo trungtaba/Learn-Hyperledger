@@ -1,0 +1,61 @@
+namespace org.loyal
+
+enum MemberStatus {
+  o ACTIVE
+  o INACTIVE
+}
+asset FcoinWallet identified by fcoinWalletId {
+  o String fcoinWalletId
+  o Integer fcoinBalance
+}
+
+abstract participant Person identified by personId {
+  o String personId
+  o String personFirstName
+  o String personLastName
+  --> FcoinWallet fcoinWallet optional
+}
+
+participant Member extends Person {
+  -->FStore fStore
+  o MemberStatus memberStatus
+}
+
+participant FStore identified by fStoreId {
+  o String fStoreId
+  o String fStoreName
+  --> FcoinWallet fcoinWallet optional
+}
+
+abstract transaction FcoinExchange {
+  o Integer fcoinQuanlity
+}
+
+transaction FcoinReceive extends FcoinExchange {
+  --> Member member 
+  o String activity
+  o DateTime activityDate
+}
+
+transaction FcoinRedeem extends FcoinExchange {
+  --> Member member
+  --> FStore fStore
+  o String redeemedFor
+  o DateTime redeemedDate
+}
+
+transaction AddMember {
+  o String memberId
+  o String memberFirstName
+  o String memberLastName
+  --> FStore fStore
+}
+
+transaction AddFStore {
+  o String fStoreId
+  o String fStoreName
+}
+
+transaction InactiveMember {
+  --> Member member
+}
