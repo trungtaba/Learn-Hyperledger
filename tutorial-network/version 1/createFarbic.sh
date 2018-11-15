@@ -1,5 +1,5 @@
 function setVersion(){
-    export FABRIC_VERSION=hlfv12
+   # export FABRIC_VERSION=hlfv12
     rm -fr $HOME/.composer
 }
 
@@ -13,6 +13,7 @@ function startFabric(){
     ./startFabric.sh
     ./createPeerAdminCard.sh
 }
+export FABRIC_VERSION=hlfv12
 
 setVersion
 

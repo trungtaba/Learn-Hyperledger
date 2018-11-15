@@ -71,13 +71,13 @@ async function addMember(addMember) {
     newFcoinWallet.fcoinBalance = 100;
     await fCoinWalletRegistry.add(newFcoinWallet);
 
-    let memberRegistry = await getAssetRegistry('org.loyal.FcoinWallet');
+    let memberRegistry = await getParticipantRegistry('org.loyal.Member');
     var newMember = factory.newResource('org.loyal', 'Member', addMember.memberId);
-    newMember.personFirstName = member.memberFirstName;
-    newMember.personLastName = member.memberLastName;
+    newMember.personFirstName = addMember.memberFirstName;
+    newMember.personLastName = addMember.memberLastName;
     newMember.memberStatus='ACTIVE';
-    newMember.fStore = factory.newRelationship('org.loyal','FStore', addMember.club);
-    newMember.fitCoinWallet = factory.newRelationship('org.loyal','FcoinWallet',addMember.memberId);
+    newMember.fStore = factory.newRelationship('org.loyal','FStore', addMember.fStore);
+    newMember.fcoinWallet = factory.newRelationship('org.loyal','FcoinWallet',addMember.memberId);
     await memberRegistry.add(newMember);
 }
 
@@ -94,10 +94,10 @@ async function addFStore(addFStore) {
     newFcoinWallet.fcoinBalance = 0;
     await fCoinWalletRegistry.add(newFcoinWallet);
 
-    let fStoreRegistry = await getAssetRegistry('org.loyal.FStore');
+    let fStoreRegistry = await getParticipantRegistry('org.loyal.FStore');
     var newFStore = factory.newResource('org.loyal', 'FStore', addFStore.fStoreId);
     newFStore.fStoreName = addFStore.fStoreName;
-    newFStore.fitCoinWallet = factory.newRelationship('org.loyal','FcoinWallet',addFStore.fStoreId);
+    newFStore.fcoinWallet = factory.newRelationship('org.loyal','FcoinWallet',addFStore.fStoreId);
     await fStoreRegistry.add(newFStore);
 }
 
@@ -118,6 +118,6 @@ async function inactiveMember(inactiveMember) {
     }
 
     console.log('Member '+member.personId+' now change to inactive');
-    let assetRegistry = await getAssetRegistry('org.loyal.Member');
+    let assetRegistry = await getParticipantRegistry('org.loyal.Member');
     return await assetRegistry.update(member);
 }

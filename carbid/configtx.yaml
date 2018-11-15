@@ -1,0 +1,53 @@
+---
+Profiles:
+  TwoOrgsGenesis:
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+      - *OrdererOrg
+    Consortiums:
+      AuctionConsortium:
+        Organizations:
+        - *AuctioneerOrg
+        - *MemberOrg
+  TwoOrgsChannel:
+    Consortium: AuctionConsortium
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+      - *AuctioneerOrg
+      - *MemberOrg
+
+Organizations:
+- &OrdererOrg
+  Name: OrdererOrg
+  ID: OrdererMSP
+  MSPDir: cli/peers/ordererOrganizations/orderer-org/msp
+- &AuctioneerOrg
+  Name: AuctioneerOrgMSP
+  ID: AuctioneerOrgMSP
+  MSPDir: cli/peers/peerOrganizations/auctioneer-org/msp
+  AnchorPeers:
+  - Host: auctioneer-peer
+    Port: 7051
+- &MemberOrg
+  Name: MemberOrgMSP
+  ID: MemberOrgMSP
+  MSPDir: cli/peers/peerOrganizations/member-org/msp
+  AnchorPeers:
+  - Host: member-peer
+    Port: 7051
+
+Orderer: &OrdererDefaults
+  OrdererType: solo
+  Addresses:
+  - orderer0:7050
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Organizations:
+
+Application: &ApplicationDefaults
+  Organizations:
