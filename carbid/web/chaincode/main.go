@@ -8,31 +8,33 @@ import (
 )
 
 var logger = shim.NewLogger("main")
+var member = Member{}
+var offer = Offer{}
+var vehicle = Vehicle{}
+var vehicleListing = VehicleListing{}
+var bcFunctions = map[string]func(shim.ChaincodeStubInterface, []string) pb.Response{
+	// Member
+	"member_create": member.createMember,
+	"member_query":  member.queryMember,
+	"member_update": member.updateMember,
+	// Offer
+	"offer_create": offer.createOffer,
+	"offer_query":  offer.queryOffer,
+	// Vehicle
+	"vehicle_create":    vehicle.createVehicle,
+	"vehicle_queryById": vehicle.queryVehicleByID,
+	"vehicle_update":    vehicle.updateVehicle,
+	"bidding_close":     vehicleListing.closeBidding,
+}
 
+//SmartContract Define the Smart Contract structure
 type SmartContract struct {
 }
 
-var bcFunctions = map[string]func(shim.ChaincodeStubInterface, []string) pb.Response{
-	// Member
-	"member_create": createMember,
-	"member_query":  queryMember,
-	"member_update": updateMember,
-	// Offer
-	"offer_create": createOffer,
-	"offer_query":  queryOffer,
-	// Vehicle
-	"vehicle_create":    createVehicle,
-	"vehicle_queryById": queryVehicleByID,
-	"vehicle_update":    updateVehicle,
-	"bidding_close":     closeBidding,
-}
-
-// Init callback representing the invocation of a chaincode
 func (t *SmartContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(nil)
 }
 
-// Invoke Function accept blockchain code invocations.
 func (t *SmartContract) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 

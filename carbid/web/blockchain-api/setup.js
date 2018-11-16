@@ -2,8 +2,6 @@
 
 import config from './config';
 import { OrganizationClient } from './utils';
-import http from 'http';
-import url from 'url';
 
 let status = 'down';
 let statusChangedCallbacks = [];

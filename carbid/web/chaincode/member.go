@@ -39,7 +39,7 @@ func (v *Member) createMember(APIstub shim.ChaincodeStubInterface, args []string
 /*
 	args[0]: key
 */
-func (v *Vehicle) queryMember(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (v *Member) queryMember(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 	if len(args) != 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
@@ -55,7 +55,7 @@ func (v *Vehicle) queryMember(APIstub shim.ChaincodeStubInterface, args []string
 	agrs[3]: last name
 	agrs[4]: balance
 */
-func (v *Vehicle) updateMember(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+func (v *Member) updateMember(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 	if len(args) != 5 {
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
