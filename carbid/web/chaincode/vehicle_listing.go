@@ -68,5 +68,5 @@ func (v *VehicleListing) closeBidding(APIstub shim.ChaincodeStubInterface, args 
 
 		return shim.Success(nil)
 	}
-
+	return shim.Error("Could not close bid")
 }

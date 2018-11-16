@@ -47,5 +47,17 @@ mv $MEMBERCAPATH/ca/*-cert.pem $MEMBERCAPATH/ca/cert.pem
 mv $MEMBERCAPATH/tls/*_sk $MEMBERCAPATH/tls/key.pem
 mv $MEMBERCAPATH/tls/*-cert.pem $MEMBERCAPATH/tls/cert.pem
 
+WEBCERTS=$PROJPATH/web/certs
+rm -rf $WEBCERTS
+mkdir -p $WEBCERTS
+cp $PROJPATH/orderer/crypto/tls/ca.crt $WEBCERTS/ordererOrg.pem
+cp $PROJPATH/auctioneerPeer/crypto/tls/ca.crt $WEBCERTS/auctioneerOrg.pem
+cp $PROJPATH/memberPeer/crypto/tls/ca.crt $WEBCERTS/memberOrg.pem
+
+cp $PEERS/auctioneer-org/users/Admin@auctioneer-org/msp/keystore/* $WEBCERTS/Admin@auctioneer-org-key.pem
+cp $PEERS/auctioneer-org/users/Admin@auctioneer-org/msp/signcerts/* $WEBCERTS/
+cp $PEERS/member-org/users/Admin@member-org/msp/keystore/* $WEBCERTS/Admin@member-org-key.pem
+cp $PEERS/member-org/users/Admin@member-org/msp/signcerts/* $WEBCERTS/
+
 
 
