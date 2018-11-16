@@ -31,10 +31,12 @@ var bcFunctions = map[string]func(shim.ChaincodeStubInterface, []string) pb.Resp
 type SmartContract struct {
 }
 
+//Init
 func (t *SmartContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Success(nil)
 }
 
+//Invoke
 func (t *SmartContract) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 
